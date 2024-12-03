@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 
-from .validators import validate_year
+from .validators import validate_year, validate_slug
 
 User = get_user_model()
 
@@ -15,7 +15,8 @@ class Category(models.Model):
     slug = models.SlugField(
         'слаг категории',
         max_length=50,
-        unique=True
+        unique=True,
+        validators=[validate_slug]
     )
 
     class Meta:
@@ -34,7 +35,8 @@ class Genre(models.Model):
     )
     slug = models.SlugField(
         'слаг жанра',
-        unique=True
+        unique=True,
+        validators=[validate_slug]
     )
 
     class Meta:
