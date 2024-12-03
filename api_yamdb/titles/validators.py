@@ -1,6 +1,6 @@
-import re
-from django.core.exceptions import ValidationError
+from django.core.validators import RegexValidator
 from django.utils import timezone
+from django.core.exceptions import ValidationError
 
 
 def validate_year(value):
@@ -11,10 +11,7 @@ def validate_year(value):
         )
 
 
-def validate_slug(value):
-    pattern = r'^[-a-zA-Z0-9_]+$'
-    if not re.match(pattern, value):
-        raise ValidationError(
-            f'Слаг "{value}" не соответствует требованиям. '
-            'Допустимы только буквы, цифры, дефисы и подчёркивания.'
-        )
+validate_slug = RegexValidator(
+    regex=r'^[-a-zA-Z0-9_]+$',
+    message='Слаг может содержать только буквы, цифры, дефисы и подчёркивания.'
+)
