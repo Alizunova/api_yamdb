@@ -49,14 +49,14 @@ class Genre(models.Model):
 
 class Title(models.Model):
     name = models.CharField(
-        verbose_name="Название"
+        verbose_name="Название",
         max_length=256
     )
     year = models.PositiveIntegerField(
         verbose_name="Год выпуска",
         validators=[validate_year,],
-#         null=True,
-#         blank=True
+        null=True,
+        blank=True
     )
     description = models.TextField(
         verbose_name="Описание",

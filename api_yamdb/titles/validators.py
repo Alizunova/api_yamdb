@@ -1,17 +1,17 @@
 from django.core.validators import RegexValidator
-from django.utils import timezone
 from django.core.exceptions import ValidationError
+from django.utils import timezone
 
 
 def validate_year(value):
-    current_year = timezone.now().year
-    if value > current_year:
+    if value > timezone.now().year:
         raise ValidationError(
-            f'{value} год не корректен.'
+            f"{value} год не корректен."
+            f"Введите корректный год"
         )
 
 
 validate_slug = RegexValidator(
-    regex=r'^[-a-zA-Z0-9_]+$',
-    message='Слаг может содержать только буквы, цифры, дефисы и подчёркивания.'
+    r"^[-a-zA-Z0-9_]+$",
+    "Можно использовать латинские символы, цифры, дефисы и подчёркивания."
 )
