@@ -3,7 +3,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets
 from rest_framework.filters import SearchFilter
 from rest_framework.pagination import PageNumberPagination
-from reviews.models import Category, Genre, Title
+from titles.models import Category, Genre, Title
 
 from .filters import FilterTitle
 from .mixins import ListCreateDeleteViewSet
