@@ -32,7 +32,7 @@ class TitleSerializer(serializers.ModelSerializer):
         read_only=True
     )
     genre = GenreSerializer(
-        many=True, 
+        many=True,
         read_only=True
     )
     rating = serializers.FloatField()
@@ -47,12 +47,12 @@ class TitlePostSerializer(serializers.ModelSerializer):
     Сериализатор для POST запросов произведений.
     """
     category = serializers.SlugRelatedField(
-        slug_field='slug', 
+        slug_field='slug',
         queryset=Category.objects.all()
     )
     genre = serializers.SlugRelatedField(
-        slug_field='slug', 
-        queryset=Genre.objects.all(), 
+        slug_field='slug',
+        queryset=Genre.objects.all(),
         many=True
     )
 

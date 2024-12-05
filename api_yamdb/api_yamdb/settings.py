@@ -20,7 +20,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'titles.apps.TitlesConfig',
-    'api.apps.ApiConfig'
+    'api.apps.ApiConfig',
+    'users.apps.UsersConfig'
 ]
 
 MIDDLEWARE = [
@@ -95,7 +96,7 @@ STATICFILES_DIRS = ((BASE_DIR / 'static/'),)
 
 UPLOAD_DATA_DIR = BASE_DIR / 'static' / 'data'
 
-AUTH_USER_MODEL = 'users.MyUser'
+AUTH_USER_MODEL = 'users.User'
 
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
