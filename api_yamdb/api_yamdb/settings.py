@@ -93,3 +93,11 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = ((BASE_DIR / 'static/'),)
 
 UPLOAD_DATA_DIR = BASE_DIR / 'static' / 'data'
+
+AUTH_USER_MODEL = 'users.MyUser'
+
+REST_FRAMEWORK = {
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ]
+}

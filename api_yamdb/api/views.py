@@ -8,7 +8,10 @@ from rest_framework.pagination import PageNumberPagination
 from titles.models import Category, Genre, Title, Review
 from api.filters import FilterTitle
 from api.mixins import ListCreateDeleteViewSet
-from api.permissions import AdminOrReadOnly
+from api.permissions import (
+    IsAdminModeratorAuthorOrReadOnly,
+    IsAdminUserOrReadOnly
+)
 from api.serializers import (
     CategorySerializer,
     CommentSerializer,
@@ -28,7 +31,7 @@ class CategoryViewSet(ListCreateDeleteViewSet):
     pagination_class = PageNumberPagination
     search_fields = ('name', )
     lookup_field = 'slug'
-    permission_classes = (AdminOrReadOnly, )
+    permission_classes = (IsAdminUserOrReadOnly,)
 
 
 class GenreViewSet(ListCreateDeleteViewSet):
@@ -40,7 +43,7 @@ class GenreViewSet(ListCreateDeleteViewSet):
     pagination_class = PageNumberPagination
     search_fields = ('name', )
     lookup_field = 'slug'
-    permission_classes = (AdminOrReadOnly, )
+    permission_classes = (IsAdminUserOrReadOnly,)
 
 
 class TitleViewSet(viewsets.ModelViewSet):
@@ -50,7 +53,7 @@ class TitleViewSet(viewsets.ModelViewSet):
     serializer_class = TitleSerializer
     filter_backends = (DjangoFilterBackend,)
     filterset_class = FilterTitle
-    permission_classes = (AdminOrReadOnly, )
+    permission_classes = (IsAdminUserOrReadOnly,)
     pagination_class = PageNumberPagination
 
     def get_serializer_class(self):
@@ -66,7 +69,10 @@ class TitleViewSet(viewsets.ModelViewSet):
 
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    permission_classes = (
+        permissions.IsAuthenticatedOrReadOnly,
+        IsAdminModeratorAuthorOrReadOnly,
+    )
 
     def get_title(self):
         return get_object_or_404(Title, id=self.kwargs.get('title_id'))
@@ -80,7 +86,10 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    permission_classes = (
+        permissions.IsAuthenticatedOrReadOnly,
+        IsAdminModeratorAuthorOrReadOnly,
+    )
 
     def get_review(self):
         return get_object_or_404(Review, id=self.kwargs.get('review_id'))
