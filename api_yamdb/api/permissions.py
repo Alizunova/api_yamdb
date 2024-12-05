@@ -1,10 +1,6 @@
 from rest_framework import permissions
-# Аноним- только для чтения
-# Аутонтифицированный пользователь, если он автор или модератор или админ
-# может все.
-# если разрешены безопасные методы- Пост запрос разрешен аутентифицированному
-# пользователю, если он не автор
-# Доступ на уровне получения объекта
+
+
 class IsAdminModeratorAuthorOrReadOnly(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
@@ -28,7 +24,7 @@ class IsAdminSuperuser(permissions.BasePermission):
             or request.user.is_superuser
         )
 
-#  разрешены безопасные запросы или это авторизован пользователь или админ
+
 class IsAdminUserOrReadOnly(permissions.BasePermission):
 
     def has_permission(self, request, view):

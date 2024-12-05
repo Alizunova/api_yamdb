@@ -8,9 +8,12 @@ from rest_framework.response import Response
 
 
 from users.models import User
-from api.permissions import IsAdminOrReadOnly
-from .serializers import (UserAccessTokenSerializer, UserCreationSerializer, UserSerializer)
-from sesame.utils import get_token
+from api.permissions import IsAdminUserOrReadOnly
+from .serializers import (
+    UserAccessTokenSerializer,
+    UserCreationSerializer,
+    UserSerializer
+)
 
 
 @api_view(['POST'])
@@ -60,7 +63,7 @@ def get_jwt_token(request):
     )
     confirmation_code = serializer.validated_data['confirmation_code']
     if default_token_generator.check_token(user, confirmation_code):
-        token = get_token(user)
+        token = default_token_generator.make_token(user)
         response = {'token': str(token['access'])}
         return Response(response, status=status.HTTP_200_OK)
     return Response(
@@ -70,11 +73,11 @@ def get_jwt_token(request):
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    
+
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = (IsAdminOrReadOnly, permissions.IsAuthenticated)
-    
+    permission_classes = (IsAdminUserOrReadOnly, permissions.IsAuthenticated)
+
     @action(
         detail=False,
         methods=['get', 'patch'],

@@ -31,6 +31,14 @@ class User(AbstractUser):
         null=True
     )
 
+    @property
+    def is_admin(self):
+        return self.role == 'admin'
+
+    @property
+    def is_moderator(self):
+        return self.role == 'moderator'
+
     class Meta(AbstractUser.Meta):
 
         constraints = [
