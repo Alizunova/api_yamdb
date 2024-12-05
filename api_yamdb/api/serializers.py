@@ -1,7 +1,64 @@
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 
-from titles.models import Comment, Review
+from titles.models import Category, Comment, Genre, Review, Title
+
+
+class CategorySerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для категорий.
+    """
+    class Meta:
+        model = Category
+        fields = ('name', 'slug')
+        lookup_field = 'slug'
+
+
+class GenreSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для жанров.
+    """
+    class Meta:
+        model = Genre
+        fields = ('name', 'slug')
+        lookup_field = 'slug'
+
+
+class TitleSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для GET запросов произведений.
+    """
+    category = CategorySerializer(
+        read_only=True
+    )
+    genre = GenreSerializer(
+        many=True, 
+        read_only=True
+    )
+    rating = serializers.FloatField()
+
+    class Meta:
+        model = Title
+        fields = '__all__'
+
+
+class TitlePostSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для POST запросов произведений.
+    """
+    category = serializers.SlugRelatedField(
+        slug_field='slug', 
+        queryset=Category.objects.all()
+    )
+    genre = serializers.SlugRelatedField(
+        slug_field='slug', 
+        queryset=Genre.objects.all(), 
+        many=True
+    )
+
+    class Meta:
+        fields = '__all__'
+        model = Title
 
 
 class ReviewSerializer(serializers.ModelSerializer):
