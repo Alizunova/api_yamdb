@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-
+from django.core.validators import RegexValidator
+from django.core.validators import MaxLengthValidator
 # Дописать кто может заходить в админку
 
 
@@ -16,19 +17,34 @@ class User(AbstractUser):
 
     )
     email = models.EmailField(
-        'Электронная почта', max_length=254, unique=True, blank=True)
-    role = models.CharField('Роль', choices=CHOICES, max_length=10)
+        'Электронная почта', max_length=254, unique=True)
+    role = models.CharField('Роль', choices=CHOICES, max_length=10, default='user')
     confirmation_code = models.CharField(
-        'Код подтверждения',
+        'Код подтверждения', validators=[MaxLengthValidator(254)], 
         max_length=100, editable=False, null=True
     )
     username = models.CharField(
-        'Имя пользователя', max_length=150, unique=True, blank=True)
-    bio = models.CharField(
+        'Имя пользователя', max_length=150, unique=True,
+        validators=[
+            RegexValidator(regex=r'^[\w.@+-]',
+            message='Недопустимые символы в имени пользователя')
+        ]
+    )
+    bio = models.TextField(
         verbose_name='Биография',
-        max_length=100,
         blank=True,
-        null=True
+    )
+
+    first_name = models.CharField(
+        'Имя',
+        max_length=150,
+        blank=True
+    )
+
+    last_name = models.CharField(
+        'Фамилия',
+        max_length=150,
+        blank=True
     )
 
     @property
@@ -40,7 +56,6 @@ class User(AbstractUser):
         return self.role == 'moderator'
 
     class Meta(AbstractUser.Meta):
-
         constraints = [
             models.UniqueConstraint(
                 fields=['username', 'email'], name='unique_username_email'

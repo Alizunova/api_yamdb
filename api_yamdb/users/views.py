@@ -5,10 +5,10 @@ from django.shortcuts import get_object_or_404
 from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.response import Response
-
-
+from rest_framework.filters import SearchFilter
+from rest_framework.exceptions import MethodNotAllowed
 from users.models import User
-from api.permissions import IsAdminUserOrReadOnly
+from api.permissions import IsAdminUserOrReadOnly, IsAdminSuperuser
 from .serializers import (
     UserAccessTokenSerializer,
     UserCreationSerializer,
@@ -28,13 +28,9 @@ def signup(request):
     serializer.is_valid(raise_exception=True)
     email = serializer.validated_data['email']
     username = serializer.validated_data['username']
-    if (
-        User.objects.filter(email=email).exists()
-        or User.objects.filter(username=username).exists()
-    ):
-        return Response(status=status.HTTP_400_BAD_REQUEST)
-    user, code_created = User.objects.get_or_create(
-        email=email, username=username)
+    user, _ = User.objects.get_or_create(
+        email=email, username=username
+    )
     confirmation_code = default_token_generator.make_token(user)
     user.confirmation_code = confirmation_code
     user.save()
@@ -45,7 +41,7 @@ def signup(request):
         [email]
     )
     return Response(
-        serializer.validated_data,
+        serializer.data,
         status=status.HTTP_200_OK
     )
 
@@ -73,18 +69,24 @@ def get_jwt_token(request):
 
 
 class UserViewSet(viewsets.ModelViewSet):
-
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = (IsAdminUserOrReadOnly, permissions.IsAuthenticated)
+    permission_classes = [IsAdminSuperuser]
+    filter_backends = [SearchFilter]
+    search_fields = ['username']
+    lookup_field = 'username'
+    http_method_names = ['get', 'post', 'patch', 'delete']
+    # Метод для частичного обновления
+    # def partial_update(self, request, *args, **kwargs):
+    #     return super().partial_update(request, *args, **kwargs)
+    # def update(self, request, *args, **kwargs):
+    #     raise MethodNotAllowed('PUT method not allowed for this endpoint')
 
     @action(
         detail=False,
         methods=['get', 'patch'],
         permission_classes=[permissions.IsAuthenticated]
     )
-    @action(methods=['patch', 'get'], detail=False,
-            permission_classes=[permissions.IsAuthenticated])
     def me(self, request):
         if request.method == 'GET':
             serializer = UserSerializer(self.request.user)
