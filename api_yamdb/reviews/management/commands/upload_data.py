@@ -1,7 +1,7 @@
 from django.core.management import BaseCommand
-from titles.management.commands._upload import modify_data_title, upload_data
-
+from reviews.management.commands._upload import upload_data, modify_data_title
 from reviews.models import Category, Comment, Genre, Review, Title, User
+
 
 FILE_MODEL = {
     'users.csv': User,
@@ -14,16 +14,13 @@ FILE_MODEL = {
 
 
 class Command(BaseCommand):
-    help = "Загружает данные из CSV файлов в базу данных"
+    help = 'Загружает данные из CSV файлов в базу данных'
 
     def handle(self, *args, **options):
         for file, model in FILE_MODEL.items():
-            self.stdout.write(
-                f"Загрузка данных из {file} в модель {model.__name__}..."
-            )
+            name = model.__name__
+            self.stdout.write(f'Загрузка данных из {file} в модель {name}...')
             upload_data(file, model)
-
-        self.stdout.write("Установка связей между заголовками и жанрами...")
+        self.stdout.write('Установка связей между заголовками и жанрами...')
         modify_data_title(Title, Genre, 'genre_title.csv')
-
         self.stdout.write(self.style.SUCCESS('Данные успешно загружены!'))

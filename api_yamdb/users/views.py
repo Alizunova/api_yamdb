@@ -9,8 +9,11 @@ from rest_framework.response import Response
 
 from api.permissions import IsAdminSuperuser
 from users.models import User
-from users.serializers import (UserAccessTokenSerializer,
-                               UserCreationSerializer, UserSerializer)
+from users.serializers import (
+    UserAccessTokenSerializer,
+    UserCreationSerializer, 
+    UserSerializer
+)
 
 
 @api_view(['POST'])
@@ -19,9 +22,9 @@ def signup(request):
     serializer = UserCreationSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     email = serializer.validated_data['email']
-    username = serializer.validated_data['username']
     user, _ = User.objects.get_or_create(
-        email=email, username=username
+        email=email, 
+        username=serializer.validated_data['username']
     )
     confirmation_code = default_token_generator.make_token(user)
     user.confirmation_code = confirmation_code
@@ -32,10 +35,7 @@ def signup(request):
         settings.DEFAULT_FROM_EMAIL,
         [email]
     )
-    return Response(
-        serializer.data,
-        status=status.HTTP_200_OK
-    )
+    return Response(serializer.data, status.HTTP_200_OK)
 
 
 @api_view(['POST'])
@@ -50,36 +50,35 @@ def get_jwt_token(request):
     if default_token_generator.check_token(user, confirmation_code):
         token = default_token_generator.make_token(user)
         response = {'token': str(token['access'])}
-        return Response(response, status=status.HTTP_200_OK)
-    return Response(
-        serializer.errors,
-        status=status.HTTP_400_BAD_REQUEST
-    )
+        return Response(response, status.HTTP_200_OK)
+    return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    """
-    Представление пользователя
-    """
+    """Представление пользователя."""
+
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAdminSuperuser]
     filter_backends = [SearchFilter]
     search_fields = ['username']
     lookup_field = 'username'
-    http_method_names = ['get', 'post', 'patch', 'delete']
+    http_method_names = ['GET', 'POST', 'PATCH', 'DELETE']
 
     @action(
         detail=False,
-        methods=['get', 'patch'],
+        methods=['GET', 'PATCH'],
         permission_classes=[permissions.IsAuthenticated]
     )
     def me(self, request):
         if request.method == 'GET':
             serializer = UserSerializer(self.request.user)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        serializer = UserSerializer(self.request.user,
-                                    data=request.data, partial=True)
+            return Response(serializer.data, status.HTTP_200_OK)
+        serializer = UserSerializer(
+            self.request.user,
+            data=request.data, 
+            partial=True
+        )
         serializer.is_valid(raise_exception=True)
         serializer.save(role=request.user.role, partial=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.data, status.HTTP_200_OK)

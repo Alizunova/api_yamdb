@@ -4,6 +4,7 @@ from django.db import models
 
 from reviews.validators import validate_slug, validate_year
 
+
 User = get_user_model()
 
 
