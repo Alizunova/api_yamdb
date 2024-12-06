@@ -1,34 +1,40 @@
 from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import models
-from django.core.validators import RegexValidator
-from django.core.validators import MaxLengthValidator
-# Дописать кто может заходить в админку
 
 
 class User(AbstractUser):
     USER = 'user'
     MODERATOR = 'moderator'
     ADMIN = 'admin'
-
     CHOICES = (
         ('admin', ADMIN),
         ('moderator', MODERATOR),
         ('user', USER),
-
     )
+    
     email = models.EmailField(
-        'Электронная почта', max_length=254, unique=True)
-    role = models.CharField('Роль', choices=CHOICES, max_length=10, default='user')
+        verbose_name='Электронная почта',
+        max_length=254,
+        unique=True
+    )
+    role = models.CharField(
+        verbose_name='Роль',
+        choices=CHOICES,
+        max_length=10,
+        default=USER
+    )
     confirmation_code = models.CharField(
-        'Код подтверждения', validators=[MaxLengthValidator(254)], 
-        max_length=100, editable=False, null=True
+        verbose_name='Код подтверждения',
+        max_length=100,
+        editable=False,
+        null=True
     )
     username = models.CharField(
-        'Имя пользователя', max_length=150, unique=True,
-        validators=[
-            RegexValidator(regex=r'^[\w.@+-]',
-            message='Недопустимые символы в имени пользователя')
-        ]
+        verbose_name='Имя пользователя',
+        max_length=150,
+        unique=True,
+        validators=[UnicodeUsernameValidator(),]
     )
     bio = models.TextField(
         verbose_name='Биография',
@@ -36,13 +42,13 @@ class User(AbstractUser):
     )
 
     first_name = models.CharField(
-        'Имя',
+        verbose_name='Имя',
         max_length=150,
         blank=True
     )
 
     last_name = models.CharField(
-        'Фамилия',
+        verbose_name='Фамилия',
         max_length=150,
         blank=True
     )
@@ -58,7 +64,8 @@ class User(AbstractUser):
     class Meta(AbstractUser.Meta):
         constraints = [
             models.UniqueConstraint(
-                fields=['username', 'email'], name='unique_username_email'
+                fields=['username', 'email'], 
+                name='unique_username_email'
             )
         ]
 

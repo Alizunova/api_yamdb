@@ -1,15 +1,12 @@
 from django.forms import ValidationError
-from django.shortcuts import get_object_or_404
 from rest_framework import serializers
-from rest_framework.validators import UniqueTogetherValidator
 
 from reviews.models import Category, Comment, Genre, Review, Title
 
 
 class CategorySerializer(serializers.ModelSerializer):
-    """
-    Сериализатор для категорий.
-    """
+    """Сериализатор для категорий."""
+    
     class Meta:
         model = Category
         fields = ('name', 'slug')
@@ -17,9 +14,8 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class GenreSerializer(serializers.ModelSerializer):
-    """
-    Сериализатор для жанров.
-    """
+    """Сериализатор для жанров."""
+    
     class Meta:
         model = Genre
         fields = ('name', 'slug')
@@ -27,9 +23,8 @@ class GenreSerializer(serializers.ModelSerializer):
 
 
 class TitleSerializer(serializers.ModelSerializer):
-    """
-    Сериализатор для GET запросов произведений.
-    """
+    """Сериализатор для GET запросов произведений."""
+    
     category = CategorySerializer(
         read_only=True
     )
@@ -45,9 +40,8 @@ class TitleSerializer(serializers.ModelSerializer):
 
 
 class TitlePostSerializer(serializers.ModelSerializer):
-    """
-    Сериализатор для POST запросов произведений.
-    """
+    """Сериализатор для POST запросов произведений."""
+    
     category = serializers.SlugRelatedField(
         slug_field='slug',
         queryset=Category.objects.all()
@@ -64,32 +58,26 @@ class TitlePostSerializer(serializers.ModelSerializer):
 
 
 class ReviewSerializer(serializers.ModelSerializer):
+    """Сериализатор для POST запросов отзывов."""
+    
     author = serializers.SlugRelatedField(
         slug_field='username',
         read_only=True,
         default=serializers.CurrentUserDefault()
     )
     score = serializers.IntegerField()
-    title = serializers.PrimaryKeyRelatedField(
-        read_only=True
-    )
+    title = serializers.PrimaryKeyRelatedField(read_only=True)
     
-    def validate(self, data: dict) -> dict:
-        """Проверяет уникальность отзыва для пользователя и оценку."""
+    def validate(self, data):
         request = self.context['request']
         author = request.user
         title_id = self.context['view'].kwargs.get('title_id')
-
         if request.method == 'POST':
             if Review.objects.filter(title_id=title_id, author=author).exists():
-                raise ValidationError(
-                    'Вы уже оставили отзыв на это произведение.'
-                )
-
+                raise ValidationError('Отзыв уже оставлен.')
         score = data.get('score')
         if score is not None and (score < 1 or score > 10):
             raise ValidationError('Оценка должна быть в диапазоне от 1 до 10.')
-
         return data
 
     class Meta:
@@ -98,6 +86,8 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
+    """Сериализатор для POST запросов комментариев."""
+    
     author = serializers.SlugRelatedField(
         read_only=True,
         slug_field='username'
