@@ -13,11 +13,11 @@ from api.permissions import (
     IsAdminUserOrReadOnly
 )
 from api.serializers import (
-    CategorySerializer, 
+    CategorySerializer,
     CommentSerializer,
-    GenreSerializer, 
+    GenreSerializer,
     ReviewSerializer,
-    TitlePostSerializer, 
+    TitlePostSerializer,
     TitleSerializer
 )
 from reviews.models import Category, Genre, Review, Title
@@ -25,7 +25,7 @@ from reviews.models import Category, Genre, Review, Title
 
 class CategoryViewSet(ListCreateDeleteViewSet):
     """Работа с категориями."""
-    
+
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     pagination_class = PageNumberPagination
@@ -37,7 +37,7 @@ class CategoryViewSet(ListCreateDeleteViewSet):
 
 class GenreViewSet(ListCreateDeleteViewSet):
     """Работа с жанрами."""
-    
+
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
     filter_backends = [SearchFilter]
@@ -49,13 +49,13 @@ class GenreViewSet(ListCreateDeleteViewSet):
 
 class TitleViewSet(viewsets.ModelViewSet):
     """Работа с произведениями."""
-    
+
     serializer_class = TitleSerializer
     filter_backends = (DjangoFilterBackend,)
     filterset_class = FilterTitle
     permission_classes = (IsAdminUserOrReadOnly,)
     pagination_class = PageNumberPagination
-    http_method_names = ['GET', 'POST', 'PATCH', 'DELETE']
+    http_method_names = ['get', 'post', 'patch', 'delete']
 
     def get_serializer_class(self):
         if self.action in ('list', 'retrieve'):
@@ -70,7 +70,7 @@ class TitleViewSet(viewsets.ModelViewSet):
 
 class ReviewViewSet(viewsets.ModelViewSet):
     """Работа с отзывами на произведения."""
-    
+
     serializer_class = ReviewSerializer
     permission_classes = (
         permissions.IsAuthenticatedOrReadOnly,
@@ -94,13 +94,13 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
 class CommentViewSet(viewsets.ModelViewSet):
     """Работа с комментариями."""
-    
+
     serializer_class = CommentSerializer
     permission_classes = (
         permissions.IsAuthenticatedOrReadOnly,
         IsAdminModeratorAuthorOrReadOnly
     )
-    
+
     def get_review(self):
         return get_object_or_404(Review, id=self.kwargs.get('review_id'))
 
@@ -108,7 +108,7 @@ class CommentViewSet(viewsets.ModelViewSet):
         return self.get_review().comments.all()
 
     def perform_create(self, serializer):
-        serializer.save(author=self.request.user,review=self.get_review())
+        serializer.save(author=self.request.user, review=self.get_review())
 
     def update(self, request, *args, **kwargs):
         if request.method == 'PUT':

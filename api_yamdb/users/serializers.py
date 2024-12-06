@@ -2,7 +2,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
-from django.core.validators import RegexValidator
+
 from users.models import User
 
 
@@ -10,7 +10,8 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('username', 'email', 'first_name', 'last_name', 'bio', 'role')
+        fields = ('username', 'email', 'first_name',
+                  'last_name', 'bio', 'role')
 
 
 class UserCreationSerializer(serializers.Serializer):
@@ -36,7 +37,7 @@ class UserCreationSerializer(serializers.Serializer):
 class UserAccessTokenSerializer(serializers.Serializer):
     username = serializers.CharField(required=True)
     confirmation_code = serializers.CharField(required=True)
-    
+
     def validate(self, data):
         user = get_object_or_404(User, username=data['username'])
         confirmation_code = data['confirmation_code']

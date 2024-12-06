@@ -5,13 +5,14 @@ from django.shortcuts import get_object_or_404
 from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.filters import SearchFilter
+from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 
 from api.permissions import IsAdminSuperuser
 from users.models import User
 from users.serializers import (
     UserAccessTokenSerializer,
-    UserCreationSerializer, 
+    UserCreationSerializer,
     UserSerializer
 )
 
@@ -23,7 +24,7 @@ def signup(request):
     serializer.is_valid(raise_exception=True)
     email = serializer.validated_data['email']
     user, _ = User.objects.get_or_create(
-        email=email, 
+        email=email,
         username=serializer.validated_data['username']
     )
     confirmation_code = default_token_generator.make_token(user)
@@ -40,7 +41,7 @@ def signup(request):
 
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny])
-def get_jwt_token(request):
+def get_token(request):
     serializer = UserAccessTokenSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     user = get_object_or_404(
@@ -60,14 +61,15 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAdminSuperuser]
+    pagination_class = LimitOffsetPagination
     filter_backends = [SearchFilter]
     search_fields = ['username']
     lookup_field = 'username'
-    http_method_names = ['GET', 'POST', 'PATCH', 'DELETE']
+    http_method_names = ['get', 'post', 'patch', 'delete']
 
     @action(
         detail=False,
-        methods=['GET', 'PATCH'],
+        methods=['get', 'patch'],
         permission_classes=[permissions.IsAuthenticated]
     )
     def me(self, request):
@@ -76,7 +78,7 @@ class UserViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status.HTTP_200_OK)
         serializer = UserSerializer(
             self.request.user,
-            data=request.data, 
+            data=request.data,
             partial=True
         )
         serializer.is_valid(raise_exception=True)

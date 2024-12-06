@@ -12,7 +12,7 @@ class User(AbstractUser):
         ('moderator', MODERATOR),
         ('user', USER),
     )
-    
+
     email = models.EmailField(
         verbose_name='Электронная почта',
         max_length=254,
@@ -64,7 +64,7 @@ class User(AbstractUser):
     class Meta(AbstractUser.Meta):
         constraints = [
             models.UniqueConstraint(
-                fields=['username', 'email'], 
+                fields=['username', 'email'],
                 name='unique_username_email'
             )
         ]
