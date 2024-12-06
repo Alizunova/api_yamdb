@@ -14,7 +14,15 @@ def upload_data(file: str, model: models.Model):
                 if field.is_relation: 
                     related_model = field.related_model
                     field_name = field.name
-                    pass # активно идет работа
+                    if row.get(field_name):
+                        try:
+                            row[field_name] = related_model.objects.get(pk=row[field_name])
+                        except ObjectDoesNotExist:
+                            raise ValueError(
+                                f"Ошибка: Не найден объект {related_model.__name__} с id={row[field_name]}"
+                            )
+            data_model.append(model(**row))
+    model.objects.bulk_create(data_model)
 
 
 def modify_data_title(titles: models.Model, genres: models.Model, file: str):

@@ -1,5 +1,5 @@
 from django.core.management import BaseCommand
-from titles.management.commands._upload import upload_data, modify_data_title
+from reviews.management.commands._upload import upload_data, modify_data_title
 from reviews.models import Category, Comment, Genre, Review, Title, User
 
 
