@@ -4,37 +4,25 @@ from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
 from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action, api_view, permission_classes
+from rest_framework.filters import SearchFilter
 from rest_framework.response import Response
 
-
+from api.permissions import IsAdminSuperuser
 from users.models import User
-from api.permissions import IsAdminUserOrReadOnly
-from .serializers import (
-    UserAccessTokenSerializer,
-    UserCreationSerializer,
-    UserSerializer
-)
+from users.serializers import (UserAccessTokenSerializer,
+                               UserCreationSerializer, UserSerializer)
 
 
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny])
 def signup(request):
-    """
-    If both passed fields are unique creates a new user
-    otherwise fetches an existing one
-    sends code
-    """
     serializer = UserCreationSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     email = serializer.validated_data['email']
     username = serializer.validated_data['username']
-    if (
-        User.objects.filter(email=email).exists()
-        or User.objects.filter(username=username).exists()
-    ):
-        return Response(status=status.HTTP_400_BAD_REQUEST)
-    user, code_created = User.objects.get_or_create(
-        email=email, username=username)
+    user, _ = User.objects.get_or_create(
+        email=email, username=username
+    )
     confirmation_code = default_token_generator.make_token(user)
     user.confirmation_code = confirmation_code
     user.save()
@@ -45,7 +33,7 @@ def signup(request):
         [email]
     )
     return Response(
-        serializer.validated_data,
+        serializer.data,
         status=status.HTTP_200_OK
     )
 
@@ -53,9 +41,6 @@ def signup(request):
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny])
 def get_jwt_token(request):
-    """
-    Checks confirmation code, if its OK gives jwt token
-    """
     serializer = UserAccessTokenSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     user = get_object_or_404(
@@ -73,18 +58,22 @@ def get_jwt_token(request):
 
 
 class UserViewSet(viewsets.ModelViewSet):
-
+    """
+    Представление пользователя
+    """
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = (IsAdminUserOrReadOnly, permissions.IsAuthenticated)
+    permission_classes = [IsAdminSuperuser]
+    filter_backends = [SearchFilter]
+    search_fields = ['username']
+    lookup_field = 'username'
+    http_method_names = ['get', 'post', 'patch', 'delete']
 
     @action(
         detail=False,
         methods=['get', 'patch'],
         permission_classes=[permissions.IsAuthenticated]
     )
-    @action(methods=['patch', 'get'], detail=False,
-            permission_classes=[permissions.IsAuthenticated])
     def me(self, request):
         if request.method == 'GET':
             serializer = UserSerializer(self.request.user)
