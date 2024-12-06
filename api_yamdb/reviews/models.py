@@ -16,7 +16,7 @@ class Category(models.Model):
     slug = models.SlugField(
         max_length=50,
         unique=True,
-        validators=[validate_slug,]
+        validators=[validate_slug, ]
     )
 
     class Meta:
@@ -36,7 +36,7 @@ class Genre(models.Model):
     slug = models.SlugField(
         max_length=50,
         unique=True,
-        validators=[validate_slug,]
+        validators=[validate_slug, ]
     )
 
     class Meta:
@@ -55,7 +55,7 @@ class Title(models.Model):
     )
     year = models.PositiveIntegerField(
         verbose_name='Год выпуска',
-        validators=[validate_year,],
+        validators=[validate_year, ],
         null=True,
         blank=True
     )
