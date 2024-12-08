@@ -65,7 +65,7 @@ python manage.py migrate
 5) Создать суперпользователя:
 
 ```bash
-python manage.py createsuperuser
+python manage.py createsuperuser <user>
 ```
 
 6) Запустить проект:
@@ -91,9 +91,163 @@ python manage.py upload_data
 - Отзывы <-- review.csv
 - Комментарии <-- comments.csv
 
+## Документация к API
+После запуска проекта доступна документация по адресу: http://127.0.0.1:8000/redoc/
+
+## Примеры запросов:
+- Получение списка всех произведений
+  > Request: 
+  ```
+  [GET] /api/v1/titles/
+  ```
+  > Response:
+  ```json
+  {
+    "count": 0,
+    "next": "string",
+    "previous": "string",
+    "results": [
+      {
+        "id": 0,
+        "name": "string",
+        "year": 0,
+        "rating": 0,
+        "description": "string",
+        "genre": [
+          {
+            "name": "string",
+            "slug": "^-$"
+          }
+        ],
+        "category": {
+          "name": "string",
+          "slug": "^-$"
+        }
+      }
+    ]
+  }
+  ```
+- Добавление произведения
+  > Request: 
+  ```
+  [POST] /api/v1/posts/
+  ```
+  > Payload:
+  ```json
+  {
+    "name": "string",
+    "year": 0,
+    "description": "string",
+    "genre": [
+      "string"
+    ],
+    "category": "string"
+  }
+  ```
+  > Response:
+  ```json
+  {
+    "id": 0,
+    "name": "string",
+    "year": 0,
+    "rating": 0,
+    "description": "string",
+    "genre": [
+      {}
+    ],
+    "category": {
+      "name": "string",
+      "slug": "^-$"
+    }
+  }
+  ```
+- Получение списка всех отзывов
+  > Request: 
+  ```
+  [GET] /api/v1/titles/{title_id}/reviews/
+  ```
+  > Response:
+  ```json
+  {
+    "count": 0,
+    "next": "string",
+    "previous": "string",
+    "results": [
+      {
+        "id": 0,
+        "text": "string",
+        "author": "string",
+        "score": 1,
+        "pub_date": "2024-12-08T20:15:22Z"
+      }
+    ]
+  }
+  ``` 
+- Добавление нового отзыва
+  > Request: 
+  ```
+  [POST] /api/v1/titles/{title_id}/reviews/
+  ```
+  > Payload:
+  ```json
+  {
+    "text": "string",
+    "score": 1
+  }
+  ```
+  > Response:
+  ```json
+  {
+    "id": 0,
+    "text": "string",
+    "author": "string",
+    "score": 1,
+    "pub_date": "2024-12-08T20:15:22Z"
+  }
+  ```
+- Получение списка всех комментариев к отзыву
+  > Request: 
+  ```
+  [GET] /api/v1/titles/{title_id}/reviews/{review_id}/comments/
+  ```
+  > Response:
+  ```json
+  {
+    "count": 0,
+    "next": "string",
+    "previous": "string",
+    "results": [
+      {
+        "id": 0,
+        "text": "string",
+        "author": "string",
+        "pub_date": "2019-08-24T14:15:22Z"
+      }
+    ]
+  }
+  ```
+- Добавление комментария к отзыву
+  > Request: 
+  ```
+  [POST] /api/v1/titles/{title_id}/reviews/{review_id}/comments/
+  ```
+  > Payload:
+  ```json
+  {
+    "text": "string"
+  }
+  ```
+  > Response:
+  ```json
+  {
+    "id": 0,
+    "text": "string",
+    "author": "string",
+    "pub_date": "2024-12-08T20:15:22Z"
+  }
+  ```
 
 ## Авторы
-
-#### Анна Л.
-#### Александр С.
-#### Александр Р.
+#### [GITHUB](https://github.com/Alizunova) Анна Л.
+#### [GITHUB](https://github.com/Epine369) Александр С.   
+#### [GITHUB](https://github.com/aldromanov) Александр Р.   
