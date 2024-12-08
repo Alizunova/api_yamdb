@@ -65,7 +65,7 @@ python manage.py migrate
 5) Создать суперпользователя:
 
 ```bash
-python manage.py createsuperuser <user>
+python manage.py createsuperuser
 ```
 
 6) Запустить проект:
