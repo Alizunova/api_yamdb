@@ -38,11 +38,13 @@ class Title(models.Model):
         blank=True
     )
     genre = models.ManyToManyField(
-        Genre
+        Genre,
+        verbose_name='Жанр'
     )
     category = models.ForeignKey(
         Category,
         on_delete=models.SET_NULL,
+        verbose_name='Категория',
         null=True,
         blank=True
     )
@@ -60,7 +62,8 @@ class Title(models.Model):
 class Review(CommentReviewModel):
     title = models.ForeignKey(
         Title,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        verbose_name='Произведение'
     )
     score = models.PositiveSmallIntegerField(
         verbose_name='Рейтинг',
@@ -91,7 +94,8 @@ class Review(CommentReviewModel):
 class Comment(CommentReviewModel):
     review = models.ForeignKey(
         Review,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        verbose_name='Отзыв',
     )
 
     class Meta(CommentReviewModel.Meta):
