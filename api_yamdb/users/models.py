@@ -34,7 +34,7 @@ class User(AbstractUser):
         verbose_name='Имя пользователя',
         max_length=150,
         unique=True,
-        validators=[UnicodeUsernameValidator(),]
+        validators=[UnicodeUsernameValidator(), ]
     )
     bio = models.TextField(
         verbose_name='Биография',

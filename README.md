@@ -20,11 +20,8 @@
 - pytest==6.2.4
 - pytest-django==4.4.0
 - pytest-pythonpath==0.7.3
-- django-import-export==3.2.0
-- blue==0.9.1
-- isort==5.12.0
-- djangorestframework_simplejwt==5.2.2
-- django-filter==23.2
+- djangorestframework-simplejwt==4.7.2
+- django-filter==22.1
 
 
 ## Инструкция по запуску
@@ -41,72 +38,62 @@ cd api_yamdb
 
 2) Cоздать и активировать виртуальное окружение:
 
-```
-python -m venv env
+```bash
+python -m venv venv
 ```
 
-```
-source env/bin/activate
+```bash
+source venv/Scripts/activate
 ```
 
 3) Установить зависимости из файла requirements.txt:
 
-```
+```bash
 python -m pip install --upgrade pip
 ```
 
-```
+```bash
 pip install -r requirements.txt
 ```
-4) Прозвести настройки проекта
-```
-Переименовать .env.example в .env и заполнить SECRET_KEY своим ключем
-```
-5) Выполнить миграции:
 
-```
+4) Выполнить миграции:
+
+```bash
 python manage.py migrate
 ```
-6) Создать суперпользователя:
 
-```
+5) Создать суперпользователя:
+
+```bash
 python manage.py createsuperuser
 ```
-7) Запустить проект:
 
-```
+6) Запустить проект:
+
+```bash
 python manage.py runserver
 ```
 
 
 ## Как наполнить БД
-Порядок и схема добавления CSV в БД.
-Находясь на ресурсе http://127.0.0.1:8000/admin/ проделать пошагово файлы.
-Все файлы для импорта лежат в папке проекта static/data
+Запуск команды загрузки данных из CSV в БД.
+
+```bash
+python manage.py upload_data
 ```
-1) Пользователи --> users.csv
-```
-```
-2) Жанры --> genre.csv
-```
-```
-3) Категории --> category.csv
-```
-```
-4) Произведения и жанры --> genre_title.csv
-```
-```
-5) Произведения --> titles.csv
-```
-```
-6) Отзывы --> review.csv
-```
-```
-7) Комментарии --> comments.csv
-```
+
+Соответствике моделей с файлами:
+- Пользователи <-- users.csv
+- Жанры <-- genre.csv
+- Категории <-- category.csv
+- Произведения и жанры <-- genre_title.csv
+- Произведения <-- titles.csv
+- Отзывы <-- review.csv
+- Комментарии <-- comments.csv
+
 
 ## Авторы
 
-#### Александр
-#### Александр
-#### Анна 
+#### Анна Л.
+#### Александр С.
+#### Александр Р.
