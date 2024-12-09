@@ -1,5 +1,6 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
+
 from users.views import UserViewSet, get_token, signup
 
 app_name = 'users'
@@ -11,8 +12,12 @@ auth_urls = [
     path('token/', get_token, name='token'),
     path('signup/', signup, name='signup'),
 ]
+
 pattern_list = [
     path('auth/', include(auth_urls)),
     path('', include(v1_router.urls)),
 ]
-urlpatterns = [path("v1/", include(pattern_list)), ]
+
+urlpatterns = [
+    path('v1/', include(pattern_list)),
+]

@@ -1,10 +1,16 @@
 EMAIL_MAX_LENGHT = 254
-ROLE_MAX_LENGHT = 10
-CODE_MAX_LENGHT = 100
 USERNAME_MAX_LENGHT = 150
-USER = "user"
-MODERATOR = "moderator"
-ADMIN = "admin"
-
-ME = ["me", ADMIN, MODERATOR, USER]
-USERNAME_MIN_LENGHT = 3
+USER = 'user'
+MODERATOR = 'moderator'
+ADMIN = 'admin'
+CHOICES = (
+    ('admin', ADMIN),
+    ('moderator', MODERATOR),
+    ('user', USER),
+)
+BAD_USERNAME = [
+    'me',
+    ADMIN,
+    MODERATOR,
+    USER
+]
