@@ -1,8 +1,12 @@
 from django.contrib.auth import get_user_model
 from django.core.management import BaseCommand
 
-from reviews.management.commands._upload import upload_data, modify_data_title
-from reviews.models import Category, Comment, Genre, Review, Title
+from reviews.management.commands._upload import (
+    upload_data,
+    upload_data_title_genre
+)
+
+from reviews.models import Category, Comment, Genre, Review, Title, TitleGenre
 
 
 User = get_user_model()
@@ -27,5 +31,5 @@ class Command(BaseCommand):
             self.stdout.write(f'Загрузка данных из {file} в модель {name}...')
             upload_data(file, model)
         self.stdout.write('Установка связей между произведениями и жанрами...')
-        modify_data_title(Title, Genre, 'genre_title.csv')
+        upload_data_title_genre(TitleGenre, 'genre_title.csv')
         self.stdout.write(self.style.SUCCESS('Данные успешно загружены!'))

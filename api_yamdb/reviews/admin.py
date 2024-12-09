@@ -1,9 +1,14 @@
 from django.contrib import admin
 
-from reviews.models import Category, Comment, Genre, Review, Title
+from reviews.models import Category, Comment, Genre, Review, Title, TitleGenre
 
 
 admin.site.empty_value_display = '-пусто-'
+
+
+class GenreInTabular(admin.TabularInline):
+    model = TitleGenre
+    extra = 1
 
 
 @admin.register(Category)
@@ -24,9 +29,10 @@ class ReviewAdmin(admin.ModelAdmin):
 
 @admin.register(Title)
 class TitleAdmin(admin.ModelAdmin):
-    list_display = ['name', 'year', 'get_genre',
-                    'category', 'description']
+    list_display = ['name', 'year', 'get_genre', 'category', 'description',]
     list_editable = ('category',)
+    fields = ['name', 'year', 'category', 'description']
+    inlines = [GenreInTabular,]
 
     @admin.display(description='Жанр')
     def get_genre(self, obj):
