@@ -33,7 +33,7 @@ class TitleAdmin(admin.ModelAdmin):
     list_display = ['name', 'year', 'get_genre', 'category', 'description']
     list_editable = ('category',)
     fields = ['name', 'year', 'category', 'description']
-    inlines = [GenreInTabular,]
+    inlines = [GenreInTabular]
 
     @admin.display(description='Жанр')
     def get_genre(self, obj):
