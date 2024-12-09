@@ -1,9 +1,10 @@
 from django.contrib import admin
 
+from api_yamdb.constants import EMPTY_VALUE
 from reviews.models import Category, Comment, Genre, Review, Title, TitleGenre
 
 
-admin.site.empty_value_display = '-пусто-'
+admin.site.empty_value_display = EMPTY_VALUE
 
 
 class GenreInTabular(admin.TabularInline):

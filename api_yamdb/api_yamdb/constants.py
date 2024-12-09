@@ -5,6 +5,7 @@ MAX_USERNAME_LENGHT = 150
 MIN_SCORE_VALUE = 1
 SHORT_TEXT_LENGTH = 25
 
+EMPTY_VALUE = '-пусто-'
 ADMIN = 'admin'
 MODERATOR = 'moderator'
 USER = 'user'

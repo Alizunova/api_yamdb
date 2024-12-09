@@ -1,5 +1,10 @@
 from django.contrib import admin
+
+from api_yamdb.constants import EMPTY_VALUE
 from users.models import User
+
+
+admin.site.empty_value_display = EMPTY_VALUE
 
 
 @admin.register(User)
