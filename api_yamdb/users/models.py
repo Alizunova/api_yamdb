@@ -2,66 +2,45 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import models
 
+from users.constants import (
+    ADMIN,
+    CHOICES,
+    EMAIL_MAX_LENGHT,
+    MODERATOR,
+    USER,
+    USERNAME_MAX_LENGHT
+)
+from users.validators import validate_username
+
 
 class User(AbstractUser):
-    USER = 'user'
-    MODERATOR = 'moderator'
-    ADMIN = 'admin'
-    CHOICES = (
-        ('admin', ADMIN),
-        ('moderator', MODERATOR),
-        ('user', USER),
-    )
 
     email = models.EmailField(
         verbose_name='Электронная почта',
-        max_length=254,
+        max_length=EMAIL_MAX_LENGHT,
         unique=True
     )
     role = models.CharField(
         verbose_name='Роль',
         choices=CHOICES,
-        max_length=10,
-        default=USER
-    )
-    confirmation_code = models.CharField(
-        verbose_name='Код подтверждения',
-        max_length=100,
-        editable=False,
-        null=True
+        max_length=max([len(field) for field, _ in CHOICES]),
+        default=USER,
     )
     username = models.CharField(
         verbose_name='Имя пользователя',
-        max_length=150,
+        max_length=USERNAME_MAX_LENGHT,
         unique=True,
-        validators=[UnicodeUsernameValidator(), ]
+        validators=[UnicodeUsernameValidator(), validate_username]
     )
     bio = models.TextField(
         verbose_name='Биография',
         blank=True,
     )
 
-    first_name = models.CharField(
-        verbose_name='Имя',
-        max_length=150,
-        blank=True
-    )
-
-    last_name = models.CharField(
-        verbose_name='Фамилия',
-        max_length=150,
-        blank=True
-    )
-
-    @property
-    def is_admin(self):
-        return self.role == 'admin'
-
-    @property
-    def is_moderator(self):
-        return self.role == 'moderator'
-
     class Meta(AbstractUser.Meta):
+        ordering = ['username']
+        verbose_name = 'Пользователь'
+        verbose_name_plural = 'Пользователи'
         constraints = [
             models.UniqueConstraint(
                 fields=['username', 'email'],
@@ -71,3 +50,11 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.username
+
+    @property
+    def is_admin(self):
+        return self.role == ADMIN or self.is_superuser
+
+    @property
+    def is_moderator(self):
+        return self.role == MODERATOR
