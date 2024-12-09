@@ -70,6 +70,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
         permissions.IsAuthenticatedOrReadOnly,
         IsAdminModeratorAuthorOrReadOnly,
     ]
+
     http_method_names = ['get', 'post', 'patch', 'delete']
 
     def get_title(self):
