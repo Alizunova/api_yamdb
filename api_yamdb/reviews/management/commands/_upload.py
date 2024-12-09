@@ -23,10 +23,14 @@ def upload_data(file: str, model: models.Model):
     model.objects.bulk_create(data_model)
 
 
-def modify_data_title(titles: models.Model, genres: models.Model, file: str):
+def upload_data_title_genre(model: models.Model, file: str):
+    data_model = []
     csv_path = Path(settings.UPLOAD_DATA_DIR) / file
     with open(csv_path, encoding='utf8') as csvfile:
         for row in DictReader(csvfile):
-            title = titles.objects.get(id=row['title_id'])
-            genre = genres.objects.get(id=row['genre_id'])
-            title.genre.add(genre)
+            data = {
+                'title_id': row['title_id'],
+                'genre_id': row['genre_id']
+            }
+            data_model.append(model(**data))
+        model.objects.bulk_create(data_model)
