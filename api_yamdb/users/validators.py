@@ -1,6 +1,6 @@
 from django.core.exceptions import ValidationError
 
-from users.constants import BAD_USERNAME
+from api_yamdb.constants import BAD_USERNAME
 
 
 def validate_username(value):

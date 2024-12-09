@@ -5,8 +5,8 @@ from django.core.validators import (
 from django.contrib.auth import get_user_model
 from django.db import models
 
-from reviews.сonstants import (
-    MAX_LENGTH,
+from api_yamdb.constants import (
+    MAX_TEXT_LENGTH,
     MAX_SCORE_VALUE,
     MIN_SCORE_VALUE,
     SHORT_TEXT_LENGTH
@@ -20,7 +20,7 @@ User = get_user_model()
 class GenreCategoryModel(models.Model):
     name = models.CharField(
         verbose_name='Название',
-        max_length=MAX_LENGTH,
+        max_length=MAX_TEXT_LENGTH,
         unique=True
     )
     slug = models.SlugField(
@@ -75,7 +75,7 @@ class Genre(GenreCategoryModel):
 class Title(models.Model):
     name = models.CharField(
         verbose_name='Название',
-        max_length=MAX_LENGTH
+        max_length=MAX_TEXT_LENGTH
     )
     year = models.SmallIntegerField(
         verbose_name='Год выпуска',

@@ -5,10 +5,10 @@ from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 
-from users.constants import (
+from api_yamdb.constants import (
     BAD_USERNAME,
-    EMAIL_MAX_LENGHT,
-    USERNAME_MAX_LENGHT
+    MAX_USERNAME_LENGHT,
+    MAX_EMAIL_LENGHT
 )
 from users.models import User
 from users.validators import validate_username
@@ -29,9 +29,9 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class UserCreationSerializer(serializers.Serializer):
-    email = serializers.EmailField(max_length=EMAIL_MAX_LENGHT)
+    email = serializers.EmailField(max_length=MAX_EMAIL_LENGHT)
     username = serializers.CharField(
-        max_length=USERNAME_MAX_LENGHT,
+        max_length=MAX_USERNAME_LENGHT,
         validators=[UnicodeUsernameValidator(), validate_username])
 
     def validate(self, data):

@@ -2,13 +2,13 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import models
 
-from users.constants import (
+from api_yamdb.constants import (
     ADMIN,
     CHOICES,
-    EMAIL_MAX_LENGHT,
+    MAX_EMAIL_LENGHT,
+    MAX_USERNAME_LENGHT,
     MODERATOR,
-    USER,
-    USERNAME_MAX_LENGHT
+    USER
 )
 from users.validators import validate_username
 
@@ -17,7 +17,7 @@ class User(AbstractUser):
 
     email = models.EmailField(
         verbose_name='Электронная почта',
-        max_length=EMAIL_MAX_LENGHT,
+        max_length=MAX_EMAIL_LENGHT,
         unique=True
     )
     role = models.CharField(
@@ -28,7 +28,7 @@ class User(AbstractUser):
     )
     username = models.CharField(
         verbose_name='Имя пользователя',
-        max_length=USERNAME_MAX_LENGHT,
+        max_length=MAX_USERNAME_LENGHT,
         unique=True,
         validators=[UnicodeUsernameValidator(), validate_username]
     )

@@ -1,7 +1,7 @@
 from django.forms import ValidationError
 from rest_framework import serializers
 
-from api.constants import MAX_SCORE, MIN_SCORE
+from api_yamdb.constants import MAX_SCORE_VALUE, MIN_SCORE_VALUE
 from reviews.models import Category, Comment, Genre, Review, Title
 
 
@@ -73,11 +73,11 @@ class ReviewSerializer(serializers.ModelSerializer):
         default=serializers.CurrentUserDefault()
     )
     score = serializers.IntegerField(
-        min_value=MIN_SCORE,
-        max_value=MAX_SCORE,
+        min_value=MIN_SCORE_VALUE,
+        max_value=MAX_SCORE_VALUE,
         error_messages={
-            'min_value': f'Оценка не может быть меньше {MIN_SCORE}.',
-            'max_value': f'Оценка не может быть больше {MAX_SCORE}.'
+            'min_value': f'Оценка не может быть меньше {MIN_SCORE_VALUE}.',
+            'max_value': f'Оценка не может быть больше {MAX_SCORE_VALUE}.'
         }
     )
     title = serializers.PrimaryKeyRelatedField(read_only=True)
