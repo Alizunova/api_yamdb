@@ -1,6 +1,7 @@
 from django.forms import ValidationError
 from rest_framework import serializers
 
+from api.constants import MAX_SCORE, MIN_SCORE
 from reviews.models import Category, Comment, Genre, Review, Title
 
 
@@ -10,7 +11,6 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = ('name', 'slug')
-        lookup_field = 'slug'
 
 
 class GenreSerializer(serializers.ModelSerializer):
@@ -19,7 +19,6 @@ class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Genre
         fields = ('name', 'slug')
-        lookup_field = 'slug'
 
 
 class TitleSerializer(serializers.ModelSerializer):
@@ -32,7 +31,7 @@ class TitleSerializer(serializers.ModelSerializer):
         many=True,
         read_only=True
     )
-    rating = serializers.FloatField()
+    rating = serializers.IntegerField(read_only=True, default=0)
 
     class Meta:
         model = Title
@@ -49,12 +48,20 @@ class TitlePostSerializer(serializers.ModelSerializer):
     genre = serializers.SlugRelatedField(
         slug_field='slug',
         queryset=Genre.objects.all(),
-        many=True
+        many=True,
+        allow_empty=False
     )
 
     class Meta:
         fields = '__all__'
         model = Title
+
+    def to_representation(self, instance):
+        """
+        Переопределяем метод для корректного вывода данных после
+        успешного создания/обновления.
+        """
+        return TitleSerializer(instance).data
 
 
 class ReviewSerializer(serializers.ModelSerializer):
@@ -65,27 +72,30 @@ class ReviewSerializer(serializers.ModelSerializer):
         read_only=True,
         default=serializers.CurrentUserDefault()
     )
-    score = serializers.IntegerField()
+    score = serializers.IntegerField(
+        min_value=MIN_SCORE,
+        max_value=MAX_SCORE,
+        error_messages={
+            'min_value': f'Оценка не может быть меньше {MIN_SCORE}.',
+            'max_value': f'Оценка не может быть больше {MAX_SCORE}.'
+        }
+    )
     title = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    class Meta:
+        model = Review
+        fields = ('id', 'text', 'author', 'score', 'pub_date', 'title')
 
     def validate(self, data):
         request = self.context['request']
         author = request.user
         title_id = self.context['view'].kwargs.get('title_id')
-        if request.method == 'POST':
-            if Review.objects.filter(
-                title_id=title_id,
-                author=author
-            ).exists():
-                raise ValidationError('Отзыв уже оставлен.')
-        score = data.get('score')
-        if score is not None and (score < 1 or score > 10):
-            raise ValidationError('Оценка должна быть в диапазоне от 1 до 10.')
+        if request.method == 'POST' and Review.objects.filter(
+            title_id=title_id,
+            author=author
+        ).exists():
+            raise ValidationError('Отзыв уже оставлен.')
         return data
-
-    class Meta:
-        model = Review
-        fields = '__all__'
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -98,5 +108,5 @@ class CommentSerializer(serializers.ModelSerializer):
     review = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
-        fields = '__all__'
         model = Comment
+        fields = ('id', 'text', 'author', 'pub_date', 'review')
