@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
 from api_yamdb.constants import EMPTY_VALUE
 from users.models import User
@@ -8,10 +9,9 @@ admin.site.empty_value_display = EMPTY_VALUE
 
 
 @admin.register(User)
-class UserAdmin(admin.ModelAdmin):
+class UserAdmin(BaseUserAdmin):
     list_display = ['username', 'email', 'role']
     list_editable = ('role',)
-
     fieldsets = (
         (
             None,

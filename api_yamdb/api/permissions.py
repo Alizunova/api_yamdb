@@ -3,12 +3,13 @@ from rest_framework import permissions
 
 class IsAdminModeratorAuthorOrReadOnly(permissions.BasePermission):
     """
-    Права доступа для разных пользователей.
+    Ограничение прав доступа для различных пользователей.
 
     - Безопасные методы (GET, HEAD, OPTIONS) доступны всем.
     - POST доступен только аутентифицированным пользователям.
     - PUT и DELETE доступны автору объекта, модератору или администратору.
     """
+
     def has_object_permission(self, request, view, obj):
         return (
             request.method in permissions.SAFE_METHODS
@@ -24,30 +25,31 @@ class IsAdminModeratorAuthorOrReadOnly(permissions.BasePermission):
 
 class IsAdminSuperuser(permissions.BasePermission):
     """
-    Права доступа для администратора и суперпользователя.
+    Ограничение прав доступа для администратора и суперпользователя.
 
-    Разрешает доступ только аутентифицированным пользователям,
-    которые являются администраторами или суперпользователями.
+    - Доступ разрешен только аутентифицированным пользователям,
+      которые являются администраторами или суперпользователями.
     """
+
     def has_permission(self, request, view):
         return request.user.is_authenticated and (
-            request.user.is_admin or request.user.is_superuser
+            request.user.is_admin
         )
 
 
 class IsAdminUserOrReadOnly(permissions.BasePermission):
     """
-    Права доступа для администраторов и анонимных пользователей.
+    Ограничение прав доступа для администраторов и анонимных пользователей.
 
-    - Безопасные методы доступны всем.
-    - Остальные методы доступны только администраторам
-      или суперпользователям.
+    - Безопасные методы (GET, HEAD, OPTIONS) доступны всем.
+    - Остальные методы доступны только администраторам или суперпользователям.
     """
+
     def has_permission(self, request, view):
         return (
             request.method in permissions.SAFE_METHODS
             or (
                 request.user.is_authenticated
-                and (request.user.is_admin or request.user.is_superuser)
+                and (request.user.is_admin)
             )
         )

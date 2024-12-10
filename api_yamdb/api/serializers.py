@@ -80,11 +80,10 @@ class ReviewSerializer(serializers.ModelSerializer):
             'max_value': f'Оценка не может быть больше {MAX_SCORE_VALUE}.'
         }
     )
-    title = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = Review
-        fields = ('id', 'text', 'author', 'score', 'pub_date', 'title')
+        fields = ('id', 'text', 'author', 'score', 'pub_date')
 
     def validate(self, data):
         request = self.context['request']
@@ -105,8 +104,7 @@ class CommentSerializer(serializers.ModelSerializer):
         read_only=True,
         slug_field='username'
     )
-    review = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = Comment
-        fields = ('id', 'text', 'author', 'pub_date', 'review')
+        fields = ('id', 'text', 'author', 'pub_date')
