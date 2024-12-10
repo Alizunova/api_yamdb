@@ -5,7 +5,6 @@ from reviews.management.commands._upload import (
     upload_data,
     upload_data_title_genre
 )
-
 from reviews.models import Category, Comment, Genre, Review, Title, TitleGenre
 
 
