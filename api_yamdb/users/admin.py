@@ -12,7 +12,6 @@ admin.site.empty_value_display = EMPTY_VALUE
 class UserAdmin(BaseUserAdmin):
     list_display = ['username', 'email', 'role']
     list_editable = ('role',)
-
     fieldsets = (
         (
             None,
