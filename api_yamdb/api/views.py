@@ -26,8 +26,6 @@ class CategoryViewSet(ListCreateDeleteViewSet):
 
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    lookup_field = 'slug'
-    permission_classes = [IsAdminUserOrReadOnly, ]
 
 
 class GenreViewSet(ListCreateDeleteViewSet):
@@ -35,8 +33,6 @@ class GenreViewSet(ListCreateDeleteViewSet):
 
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
-    lookup_field = 'slug'
-    permission_classes = [IsAdminUserOrReadOnly, ]
 
 
 class TitleViewSet(viewsets.ModelViewSet):
@@ -45,7 +41,7 @@ class TitleViewSet(viewsets.ModelViewSet):
     serializer_class = TitleSerializer
     filter_backends = (DjangoFilterBackend,)
     filterset_class = FilterTitle
-    permission_classes = [IsAdminUserOrReadOnly, ]
+    permission_classes = [IsAdminUserOrReadOnly]
     pagination_class = PageNumberPagination
     http_method_names = ['get', 'post', 'patch', 'delete']
     ordering_fields = ['name', 'year', 'rating']
